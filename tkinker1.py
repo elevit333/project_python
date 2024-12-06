@@ -3,7 +3,7 @@ from tkinter import *
 from json import*
 latops = []
 with open ("laptop_price.csv", mode='r', encoding='utf-8'):
-
+print
 
 #Tạo một cửa sổ mới
 window = Tk()
