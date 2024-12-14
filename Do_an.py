@@ -3,9 +3,10 @@ import pandas as pd
 
 # Đọc file CSV với encoding phù hợp
 file_path = 'laptop_price.csv'
-data = pd.read_csv(file_path, encoding='ISO-8859-1')
+data = pd.read_csv(file_path, encoding='ISO-8859-1') #Đối số này chỉ định mã hóa của tệp, đảm bảo rằng dữ liệu được đọc chính xác, đặc biệt nếu nó chứa các ký tự đặc biệt.
 
 # Trích xuất cột laptop_ID
+=======
 data_set = {'Hãng': data['Company'],
 'Product': data["Product"],
 'cpu': data["Cpu"],
