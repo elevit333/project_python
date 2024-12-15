@@ -32,5 +32,3 @@ for index, row in filtered_df.iterrows():
 
 root.Tk()
 root.title('Ứng dụng tìm laptop')
-
-T
