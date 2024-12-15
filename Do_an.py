@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as Tk
 import pandas as pd
 
 # Đọc file CSV với encoding phù hợp
@@ -25,3 +25,10 @@ def bo_loc():
     min_price = float(min_price_entry.get()) if min_price_entry.get() else 0
     max_price = float(max_price_entry.get()) if max_price_entry.get() else float('inf')
     filtered_df = filtered_df[(filtered_df['Giá cả'] >= min_price) & (filtered_df['Giá cả'] <= max_price)]
+#hiển thị bộ lọc
+result_text.delete('1.0',tk.END)
+for index, row in filtered_df.iterrows():
+  result_text.insert(tk.END, str(row.to_dict())+'\n')
+
+root.Tk()
+root.title('Ứng dụng tìm laptop')
