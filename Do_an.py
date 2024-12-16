@@ -1,13 +1,14 @@
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk, messagebox
+import matplotlib.pyplot as plt
 
-# tạo app
+# Initialize the Tkinter app
 app = tk.Tk()
 app.title("Laptop Filter GUI")
 app.geometry("950x780")
 
-# đọc csv và kiểm soát lỗi
+# Load the dataset with error handling
 file_path = '/mnt/data/laptop_price.csv'
 try:
     data = pd.read_csv(file_path, encoding='ISO-8859-1')
@@ -39,7 +40,7 @@ def on_filter_change(event=None):
         if value:
             filtered_data = filtered_data[filtered_data[key].astype(str).str.contains(value, case=False)]
 
-    # lọc theo giá
+    # Apply price range filter
     try:
         min_price = float(min_price_entry.get()) if min_price_entry.get() else 0
         max_price = float(max_price_entry.get()) if max_price_entry.get() else float('inf')
@@ -59,7 +60,7 @@ def on_filter_change(event=None):
     update_combobox_options(event.widget, filtered_data)
     update_table(filtered_data)
 
-# tạo frame
+# Create frames for layout
 filter_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
 filter_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
@@ -111,37 +112,4 @@ sort_combobox.grid(row=row, column=1, padx=5, pady=5)
 sort_combobox.bind('<<ComboboxSelected>>', on_filter_change)
 row += 1
 
-# Add table to display data
-columns = list(data.columns)
-scroll_y = tk.Scrollbar(table_frame, orient=tk.VERTICAL)
-scroll_x = tk.Scrollbar(table_frame, orient=tk.HORIZONTAL)
-
-scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
-scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
-
-table = ttk.Treeview(table_frame, columns=columns, show="headings",
-                     yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
-
-for col in columns:
-    table.heading(col, text=col)
-    table.column(col, width=120, anchor=tk.W)  # Adjust column width
-
-table.pack(fill=tk.BOTH, expand=True)
-
-scroll_y.config(command=table.yview)
-scroll_x.config(command=table.xview)
-
-# Define function to update the table
-def update_table(filtered_data):
-    # Clear existing rows
-    for row in table.get_children():
-        table.delete(row)
-
-    # Insert new rows
-    for _, row in filtered_data.iterrows():
-        table.insert("", tk.END, values=list(row))
-
-# Load initial data into the table
-update_table(data)
-
-app.mainloop()
+#thêm các lựa chọn về biểu đồ
