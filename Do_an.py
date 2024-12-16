@@ -7,8 +7,8 @@ app = tk.Tk()
 app.title("Laptop Filter GUI")
 app.geometry("950x780")
 
-# up data và xử lý các lỗi không tồn tại hoặc ko tìm thấy
-file_path = 'laptop_price.csv'
+# đọc csv và kiểm soát lỗi
+file_path = '/mnt/data/laptop_price.csv'
 try:
     data = pd.read_csv(file_path, encoding='ISO-8859-1')
 except FileNotFoundError:
@@ -20,9 +20,9 @@ except Exception as e:
     app.destroy()
     exit()
 
-# phân chia bộ lọc
+# Define filters
 def update_combobox_options(filter_key, filtered_data):
-    """Nếu người dùng đã chọn 1 option thì các widget khác sẽ tự thay đổi các option liên quan đến phần đã chọn"""
+    """Update the options of the comboboxes based on filtered data."""
     for key, combobox in filter_comboboxes.items():
         if key != filter_key:
             unique_values = [''] + sorted(filtered_data[key].dropna().unique().astype(str))
@@ -30,25 +30,43 @@ def update_combobox_options(filter_key, filtered_data):
 
 # Define the logic for dynamic filtering
 def on_filter_change(event=None):
-    """ghi nhận các sự thay đổi lựa chọn từ người dùng và tự động cập nhật các ô còn lại."""
+    """Handle changes in filters and update options dynamically."""
     filtered_data = data.copy()
 
+    # Apply text-based filters
     for key, var in filters.items():
         value = var.get().strip()
         if value:
             filtered_data = filtered_data[filtered_data[key].astype(str).str.contains(value, case=False)]
 
+    # lọc theo giá
+    try:
+        min_price = float(min_price_entry.get()) if min_price_entry.get() else 0
+        max_price = float(max_price_entry.get()) if max_price_entry.get() else float('inf')
+        filtered_data = filtered_data[(filtered_data['Price_euros'] >= min_price) &
+                                      (filtered_data['Price_euros'] <= max_price)]
+    except ValueError:
+        messagebox.showerror("Error", "Please enter valid numeric values for price range.")
+        return
+
+    # Apply sorting
+    sort_order = sort_var.get()
+    if sort_order == "Ascending":
+        filtered_data = filtered_data.sort_values(by='Price_euros', ascending=True)
+    elif sort_order == "Descending":
+        filtered_data = filtered_data.sort_values(by='Price_euros', ascending=False)
+
     update_combobox_options(event.widget, filtered_data)
     update_table(filtered_data)
 
-# tạo khung và bố cục
+# tạo frame
 filter_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
 filter_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
 table_frame = tk.Frame(app, bd=2, relief=tk.GROOVE)
-table_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True,padx=10, pady = 10)
+table_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-# thêm các bộ lọc và widget
+# Add filter widgets in filter_frame
 filters = {}
 filter_comboboxes = {}
 row = 0
@@ -68,7 +86,32 @@ for key in ['Company', 'TypeName', 'Cpu', 'Gpu', 'Ram', 'Memory', 'OpSys']:
     filter_comboboxes[key] = combobox
     row += 1
 
-# tạo bảng để hiển thị kết quả
+# Add price range filter
+price_label = tk.Label(filter_frame, text="Price Range:", anchor='w')
+price_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+
+min_price_entry = tk.Entry(filter_frame, width=10)
+min_price_entry.grid(row=row, column=1, sticky='w', padx=5, pady=5)
+min_price_entry.insert(0, "Min")
+
+max_price_entry = tk.Entry(filter_frame, width=10)
+max_price_entry.grid(row=row, column=1, sticky='e', padx=5, pady=5)
+max_price_entry.insert(0, "Max")
+row += 1
+
+# Add sort filter
+sort_var = tk.StringVar()
+sort_var.set("None")  # Default sort option
+sort_label = tk.Label(filter_frame, text="Sort by Price:", anchor='w')
+sort_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+
+sort_combobox = ttk.Combobox(filter_frame, textvariable=sort_var, state="readonly")
+sort_combobox['values'] = ["None", "Ascending", "Descending"]
+sort_combobox.grid(row=row, column=1, padx=5, pady=5)
+sort_combobox.bind('<<ComboboxSelected>>', on_filter_change)
+row += 1
+
+# Add table to display data
 columns = list(data.columns)
 scroll_y = tk.Scrollbar(table_frame, orient=tk.VERTICAL)
 scroll_x = tk.Scrollbar(table_frame, orient=tk.HORIZONTAL)
