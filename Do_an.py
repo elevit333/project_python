@@ -169,4 +169,4 @@ update_table(data)
 
 app.mainloop()
 
-t
+
