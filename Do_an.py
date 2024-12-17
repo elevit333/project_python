@@ -118,6 +118,17 @@ elif option == 'Laptop Count by Company':
         counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
         plt.show()
 
+elif option == 'Laptop Count by Selected Company':
+        company = filters['Company'].get()
+        if company:
+            selected_data = data[data['Company'] == company]
+            counts = selected_data['Product'].value_counts()
+            counts.plot(kind='bar', title=f'Laptop Count for {company}', xlabel='Product', ylabel='Count', color='green', grid=True)
+            plt.xticks(rotation=45)
+            plt.show()
+        else:
+            messagebox.showwarning("Warning", "Please select a Company first!")
+
 #hiển thị bảng kết quả 
 columns = list(data.columns)
 scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
