@@ -93,11 +93,9 @@ price_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
 
 min_price_entry = tk.Entry(filter_frame, width=10)
 min_price_entry.grid(row=row, column=1, sticky='w', padx=5, pady=5)
-min_price_entry.insert(0, "Min")
 
 max_price_entry = tk.Entry(filter_frame, width=10)
 max_price_entry.grid(row=row, column=1, sticky='e', padx=5, pady=5)
-max_price_entry.insert(0, "Max")
 row += 1
 
 # Add sort filter
