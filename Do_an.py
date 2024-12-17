@@ -72,7 +72,7 @@ filters = {}
 filter_comboboxes = {}
 row = 0
 
-for key in ['Company', 'TypeName', 'Cpu', 'Gpu', 'Ram', 'Memory', 'OpSys']:
+for key in ['Company', 'Product', 'TypeName', 'Cpu', 'Gpu', 'Ram', 'Memory', 'OpSys']:
     label = tk.Label(filter_frame, text=f"{key}:", anchor='w')
     label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
 
