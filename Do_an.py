@@ -118,22 +118,22 @@ def show_chart(option):
         plt.xticks(rotation=45)
         plt.show()
 
-elif option == 'Laptop Count by Company':
-     counts = data['Company'].value_counts()
-     counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
-     plt.show()
+    elif option == 'Laptop Count by Company':
+        counts = data['Company'].value_counts()
+        counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
+        plt.show()
 
-elif option == 'Laptop Count by Selected Company':
-     company = filters['Company'].get()
-     if company:
-         selected_data = data[data['Company'] == company]
-         counts = selected_data['Product'].value_counts()
-         counts.plot(kind='bar', title=f'Laptop Count for {company}', xlabel='Product', ylabel='Count', color='green', grid=True)
-         plt.xticks(rotation=45)
-         plt.show()
-     else:
-         messagebox.showwarning("Warning", "Please select a Company first!")
- elif option == 'GPU Usage by Company':
+    elif option == 'Laptop Count by Selected Company':
+        company = filters['Company'].get()
+        if company:
+            selected_data = data[data['Company'] == company]
+            counts = selected_data['Product'].value_counts()
+            counts.plot(kind='bar', title=f'Laptop Count for {company}', xlabel='Product', ylabel='Count', color='green', grid=True)
+            plt.xticks(rotation=45)
+            plt.show()
+        else:
+            messagebox.showwarning("Warning", "Please select a Company first!")
+    elif option == 'GPU Usage by Company':
         gpu = filters['Gpu'].get()
         if gpu:
             selected_data = data[data['Gpu'] == gpu]
@@ -144,12 +144,12 @@ elif option == 'Laptop Count by Selected Company':
         else:
             messagebox.showwarning("Warning", "Please select a GPU first!")
 
- elif option == 'Operating System Usage':
+    elif option == 'Operating System Usage':
         opsys_counts = data['OpSys'].value_counts()
         opsys_counts.plot(kind='barh', title='Operating System Usage', xlabel='Count', ylabel='Operating System', grid=True)
         plt.show()
 
- elif option == 'Memory Usage in Selected Product':
+    elif option == 'Memory Usage in Selected Product':
         product = filters['Product'].get()
         if product:
             selected_data = data[data['Product'] == product]
@@ -158,10 +158,10 @@ elif option == 'Laptop Count by Selected Company':
             plt.show()
         else:
             messagebox.showwarning("Warning", "Please select a Product first!")
-elif option == 'Product Count by TypeName':
+    elif option == 'Product Count by TypeName':
         typename_counts = data['TypeName'].value_counts()
-typename_counts.plot(kind='bar', title='Product Count by TypeName', xlabel='TypeName', ylabel='Count', color='black', grid=True)
-plt.xticks(rotation=45)
+        typename_counts.plot(kind='bar', title='Product Count by TypeName', xlabel='TypeName', ylabel='Count', color='black', grid=True)
+        plt.xticks(rotation=45)
         plt.show()
 chart_options = [
     'Average Price by Company',
@@ -182,8 +182,8 @@ chart_button = tk.Button(filter_frame, text="Show Chart", command=lambda: show_c
 chart_button.grid(row=row, column=2, padx=5, pady=5)
 #hiển thị bảng kết quả 
 columns = list(data.columns)
-scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
-scroll_x tk.Scrollbar(table_frame, orient=tk.HORIZONTAL)
+scroll_y=tk.Scrollbar(table_frame, orient=tk.VERTICAL)
+scroll_x=tk.Scrollbar(table_frame, orient=tk.HORIZONTAL)
 
 scroll_y.pack(side = tk.RIGHT, fill=tk.Y)
 scroll_x.pack(side = tk.BOTTOM, fill= tk.X)
@@ -193,7 +193,7 @@ table = ttk.Treeview(table_frame, columns=columns, show="headings",
 
 for col in columns:
     table.heading(col, text = col)
-    table.heading(col, width=120 , anchor= tk.M) # Điều chỉnh chiều rộng cột
+    table.column(col, width=120 , anchor= tk.W) # Điều chỉnh chiều rộng cột
 
 table.pack(fill=tk.BOTH , expand=True)
 
@@ -207,7 +207,7 @@ def update_table(filtered_data):
         table.delete(row)
 
     # Chèn hàng mới
-    for _,row in filtered_data.iterrow():
+    for _,row in filtered_data.iterrows():
         table.insert("", tk.END, values=list(row))
 
 # Tải dữ liệu ban đầu vào bảng
