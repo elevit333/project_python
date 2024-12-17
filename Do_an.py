@@ -133,7 +133,31 @@ elif option == 'Laptop Count by Selected Company':
          plt.show()
      else:
          messagebox.showwarning("Warning", "Please select a Company first!")
+ elif option == 'GPU Usage by Company':
+        gpu = filters['Gpu'].get()
+        if gpu:
+            selected_data = data[data['Gpu'] == gpu]
+            counts = selected_data['Company'].value_counts()
+            counts.plot(kind='bar', title=f'GPU Usage by Company: {gpu}', xlabel='Company', ylabel='Count', color='brown', grid=True)
+            plt.xticks(rotation=45)
+            plt.show()
+        else:
+            messagebox.showwarning("Warning", "Please select a GPU first!")
 
+ elif option == 'Operating System Usage':
+        opsys_counts = data['OpSys'].value_counts()
+        opsys_counts.plot(kind='barh', title='Operating System Usage', xlabel='Count', ylabel='Operating System', grid=True)
+        plt.show()
+
+ elif option == 'Memory Usage in Selected Product':
+        product = filters['Product'].get()
+        if product:
+            selected_data = data[data['Product'] == product]
+            counts = selected_data['Memory'].value_counts()
+            counts.plot(kind='barh', title=f'Memory Usage in {product}', xlabel='Count', ylabel='Memory', color='yellow', grid=True)
+            plt.show()
+        else:
+            messagebox.showwarning("Warning", "Please select a Product first!")
 #hiển thị bảng kết quả 
 columns = list(data.columns)
 scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
