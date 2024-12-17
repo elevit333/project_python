@@ -111,23 +111,28 @@ sort_combobox.bind('<<ComboboxSelected>>', on_filter_change)
 row += 1
 
 #thêm các lựa chọn về biểu đồ
-
-
-elif option == 'Laptop Count by Company':
-        counts = data['Company'].value_counts()
-        counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
+def show_chart(option):
+    if option == 'Average Price by Company':
+        avg_price = data.groupby('Company')['Price_euros'].mean()
+        avg_price.plot(kind='bar', title='Average Price by Company', ylabel='Price (Euros)', xlabel='Company', color='blue', grid=True)
+        plt.xticks(rotation=45)
         plt.show()
 
+elif option == 'Laptop Count by Company':
+     counts = data['Company'].value_counts()
+     counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
+     plt.show()
+
 elif option == 'Laptop Count by Selected Company':
-        company = filters['Company'].get()
-        if company:
-            selected_data = data[data['Company'] == company]
-            counts = selected_data['Product'].value_counts()
-            counts.plot(kind='bar', title=f'Laptop Count for {company}', xlabel='Product', ylabel='Count', color='green', grid=True)
-            plt.xticks(rotation=45)
-            plt.show()
-        else:
-            messagebox.showwarning("Warning", "Please select a Company first!")
+     company = filters['Company'].get()
+     if company:
+         selected_data = data[data['Company'] == company]
+         counts = selected_data['Product'].value_counts()
+         counts.plot(kind='bar', title=f'Laptop Count for {company}', xlabel='Product', ylabel='Count', color='green', grid=True)
+         plt.xticks(rotation=45)
+         plt.show()
+     else:
+         messagebox.showwarning("Warning", "Please select a Company first!")
 
 #hiển thị bảng kết quả 
 columns = list(data.columns)
@@ -146,7 +151,6 @@ for col in columns:
 
 table.pack(fill=tk.BOTH , expand=True)
 
-
 scroll_y.config(command=table.yview)
 scroll_x.config(command=table.xview)
 
@@ -155,7 +159,6 @@ def update_table(filtered_data):
     # Xóa các hàng hiện có
     for row in table.get_children():
         table.delete(row)
-
 
     # Chèn hàng mới
     for _,row in filtered_data.iterrow():
