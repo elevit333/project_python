@@ -111,3 +111,40 @@ sort_combobox.bind('<<ComboboxSelected>>', on_filter_change)
 row += 1
 
 #thêm các lựa chọn về biểu đồ
+
+#hiển thị bảng kết quả 
+columns = list(data.columns)
+scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
+scroll_x tk.Scrollbar(table_frame, orient=tk.HORIZONTAL)
+
+scroll_y.pack(side = tk.RIGHT, fill=tk.Y)
+scroll_x.pack(side = tk.BOTTOM, fill= tk.X)
+
+table = ttk.Treeview(table_frame, columns=columns, show="headings",
+                     yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
+
+for col in columns:
+    table.heading(col, text = col)
+    table.heading(col, width=120 , anchor= tk.M) # Điều chỉnh chiều rộng cột
+
+table.pack(fill=tk.BOTH , expand=True)
+
+
+scroll_y.config(command=table.yview)
+scroll_x.config(command=table.xview)
+
+# Xác định chức năng để cập nhật bảng
+def update_table(filtered_data):
+    # Xóa các hàng hiện có
+    for row in table.get_children():
+        table.delete(row)
+
+
+    # Chèn hàng mới
+    for _,row in filtered_data.iterrow():
+        table.insert("", tk.END, values=list(row))
+
+# Tải dữ liệu ban đầu vào bảng
+update_table(data)
+
+app.mainloop()
