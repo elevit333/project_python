@@ -168,3 +168,5 @@ def update_table(filtered_data):
 update_table(data)
 
 app.mainloop()
+
+t
