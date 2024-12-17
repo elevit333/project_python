@@ -112,6 +112,12 @@ row += 1
 
 #thêm các lựa chọn về biểu đồ
 
+
+elif option == 'Laptop Count by Company':
+        counts = data['Company'].value_counts()
+        counts.plot(kind='barh', title='Laptop Count by Company', xlabel='Count', ylabel='Company', color='red', grid=True)
+        plt.show()
+
 #hiển thị bảng kết quả 
 columns = list(data.columns)
 scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
