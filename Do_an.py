@@ -158,6 +158,28 @@ elif option == 'Laptop Count by Selected Company':
             plt.show()
         else:
             messagebox.showwarning("Warning", "Please select a Product first!")
+elif option == 'Product Count by TypeName':
+        typename_counts = data['TypeName'].value_counts()
+typename_counts.plot(kind='bar', title='Product Count by TypeName', xlabel='TypeName', ylabel='Count', color='black', grid=True)
+plt.xticks(rotation=45)
+        plt.show()
+chart_options = [
+    'Average Price by Company',
+    'Laptop Count by Company',
+    'Laptop Count by Selected Company',
+    'GPU Usage by Company',
+     'Operating System Usage',
+    'Memory Usage in Selected Product',
+    'Product Count by TypeName'
+]
+chart_var = tk.StringVar()
+chart_var.set(chart_options[0])
+chart_label = tk.Label(filter_frame, text="Select Chart:", anchor='w')
+chart_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+chart_combobox = ttk.Combobox(filter_frame, textvariable=chart_var, values=chart_options, state="readonly")
+chart_combobox.grid(row=row, column=1, padx=5, pady=5)
+chart_button = tk.Button(filter_frame, text="Show Chart", command=lambda: show_chart(chart_var.get()))
+chart_button.grid(row=row, column=2, padx=5, pady=5)
 #hiển thị bảng kết quả 
 columns = list(data.columns)
 scroll_y tk.Scrollbar(table_frame, orient=tk.VERTICAL)
