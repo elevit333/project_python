@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Initialize the Tkinter app
 app = tk.Tk()
-app.title("Laptop Filter GUI")
+app.title("Thông Tin Laptop")
 app.geometry("950x780")
 
 # Load the dataset with error handling
