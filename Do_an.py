@@ -21,7 +21,7 @@ except Exception as e:
     app.destroy()
     exit()
 
-# Define filters
+# Định nghĩa bộ lọc
 def update_combobox_options(filter_key, filtered_data):
     """Update the options of the comboboxes based on filtered data."""
     for key, combobox in filter_comboboxes.items():
@@ -40,7 +40,7 @@ def on_filter_change(event=None):
         if value:
             filtered_data = filtered_data[filtered_data[key].astype(str).str.contains(value, case=False)]
 
-    # Apply price range filter
+    # Bộ lọc theo giá
     try:
         min_price = float(min_price_entry.get()) if min_price_entry.get() else 0
         max_price = float(max_price_entry.get()) if max_price_entry.get() else float('inf')
@@ -60,7 +60,7 @@ def on_filter_change(event=None):
     update_combobox_options(event.widget, filtered_data)
     update_table(filtered_data)
 
-# Create frames for layout
+# Tạo khung
 filter_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
 filter_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
 
