@@ -9,7 +9,7 @@ app.title("Thông Tin Laptop")
 app.geometry("950x780")
 
 # Load the dataset with error handling
-file_path = '/mnt/data/laptop_price.csv'
+file_path = 'laptop_price.csv'
 try:
     data = pd.read_csv(file_path, encoding='ISO-8859-1')
 except FileNotFoundError:
