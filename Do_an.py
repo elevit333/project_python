@@ -8,7 +8,7 @@ app = tk.Tk()
 app.title("Thông Tin Laptop")
 app.geometry("950x780")
 
-# Load the dataset with error handling
+# tải và xử lý dataset
 file_path = 'laptop_price.csv'
 try:
     data = pd.read_csv(file_path, encoding='ISO-8859-1')
@@ -21,9 +21,8 @@ except Exception as e:
     app.destroy()
     exit()
 
-# Định nghĩa bộ lọc
+# Định nghĩa bộ lọc logic
 def update_combobox_options(filter_key, filtered_data):
-    """Update the options of the comboboxes based on filtered data."""
     for key, combobox in filter_comboboxes.items():
         if key != filter_key:
             unique_values = [''] + sorted(filtered_data[key].dropna().unique().astype(str))
@@ -41,7 +40,6 @@ def update_table(filtered_data):
 
 # Define the logic for dynamic filtering
 def on_filter_change(event=None):
-    """Handle changes in filters and update options dynamically."""
     filtered_data = data.copy()
 
     # Apply text-based filters
