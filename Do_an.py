@@ -29,6 +29,16 @@ def update_combobox_options(filter_key, filtered_data):
             unique_values = [''] + sorted(filtered_data[key].dropna().unique().astype(str))
             combobox['values'] = unique_values
 
+#tạo hàm cập nhật table
+def update_table(filtered_data):
+    """Update the table display with filtered data."""
+    # Clear existing data in the table
+    for row in table.get_children():
+        table.delete(row)
+    # Insert new data into the table
+    for _, row in filtered_data.iterrows():
+        table.insert("", "end", values=list(row))
+
 # Define the logic for dynamic filtering
 def on_filter_change(event=None):
     """Handle changes in filters and update options dynamically."""
@@ -205,19 +215,53 @@ table.pack(fill=tk.BOTH , expand=True)
 scroll_y.config(command=table.yview)
 scroll_x.config(command=table.xview)
 
-# Xác định chức năng để cập nhật bảng
-def update_table(filtered_data):
-    # Xóa các hàng hiện có
-    for row in table.get_children():
-        table.delete(row)
+# Thêm nút chỉnh sửa thông tin
+def edit_laptop_info():
+    laptop_id = laptop_id_entry.get().strip()
+    col = column_combobox.get().strip()
+    new_value = new_value_entry.get().strip()
 
-    # Chèn hàng mới
-    for _,row in filtered_data.iterrows():
-        table.insert("", tk.END, values=list(row))
+    if not laptop_id or not col or not new_value:
+        messagebox.showerror("Error", "Please fill in all fields!")
+        return
 
-# Tải dữ liệu ban đầu vào bảng
-update_table(data)
+    try:
+        # chuyển đổi dữ liệu theo csv
+        if data[col].dtype == 'float64':
+            new_value = float(new_value)
+        elif data[col].dtype == 'int64':
+            new_value = int(new_value)
+
+        # Update data
+        data.loc[data['laptop_ID'] == int(laptop_id), col] = new_value
+
+        # Lưu vào CSV
+        data.to_csv(file_path, index=False, encoding='ISO-8859-1')
+
+        messagebox.showinfo("Success", "Laptop information updated successfully!")
+        update_table(data)  # Refresh table display
+    except ValueError:
+        messagebox.showerror("Error", f"Invalid data type for column '{col}'. Please enter a valid value.")
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
+
+# tạo giao diện chỉnh sửa thông tin
+edit_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
+edit_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+
+tk.Label(edit_frame, text="Laptop ID:").grid(row=0, column=0, padx=5, pady=5)
+laptop_id_entry = tk.Entry(edit_frame, width=10)
+laptop_id_entry.grid(row=0, column=1, padx=5, pady=5)
+
+tk.Label(edit_frame, text="Column:").grid(row=0, column=2, padx=5, pady=5)
+column_combobox = ttk.Combobox(edit_frame, values=list(data.columns), state="readonly", width=15)
+column_combobox.grid(row=0, column=3, padx=5, pady=5)
+
+tk.Label(edit_frame, text="New Value:").grid(row=0, column=4, padx=5, pady=5)
+new_value_entry = tk.Entry(edit_frame, width=15)
+new_value_entry.grid(row=0, column=5, padx=5, pady=5)
+
+edit_button = tk.Button(edit_frame, text="Update Info", command=edit_laptop_info)
+edit_button.grid(row=0, column=6, padx=5, pady=5)
 
 app.mainloop()
-
-
