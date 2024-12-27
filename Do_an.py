@@ -262,4 +262,35 @@ new_value_entry.grid(row=0, column=5, padx=5, pady=5)
 edit_button = tk.Button(edit_frame, text="Update Info", command=edit_laptop_info)
 edit_button.grid(row=0, column=6, padx=5, pady=5)
 
+# Xác định logic để xóa laptop đã chọn
+def delete_laptop():
+    selected_items = table.selection()  # Lấy các hàng đã chọn trong bảng
+    if not selected_items:
+        messagebox.showwarning("Warning", "No laptop selected to delete!")
+        return
+
+    # Yêu cầu xác nhận để xóa
+    confirm = messagebox.askyesno("Confirm Delete", "Are you sure you want to delete the selected laptop?")
+    if not confirm:
+        return
+
+    try:
+        #Lặp qua các mục đã chọn và xóa các hàng tương ứng khỏi dữ liệu
+        for item in selected_items:
+            laptop_id = table.item(item, "values")[0]  # Lấy ID laptop từ cột đầu tiên
+            data.drop(data[data['laptop_ID'] == int(laptop_id)].index, inplace=True)
+
+        # Lưu dữ liệu đã cập nhật trở lại CSV
+        data.to_csv(file_path, index=False, encoding='ISO-8859-1')
+
+        # Làm mới bảng
+        messagebox.showinfo("Success", "Laptop deleted successfully!")
+        update_table(data)
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred while deleting the laptop: {e}")
+
+# Thêm nút xóa trên cửa sổ chính
+delete_button = tk.Button(edit_frame, text="Delete Laptop", command=delete_laptop) #nhét vô editframe
+delete_button.grid(row=0, column=15, columnspan=7, pady=10 , padx=25)
+
 app.mainloop()
