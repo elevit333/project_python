@@ -76,48 +76,56 @@ table_frame = tk.Frame(app, bd=2, relief=tk.GROOVE)
 table_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
 # Add filter widgets in filter_frame
+filter_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
+filter_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+
 filters = {}
 filter_comboboxes = {}
-row = 0
+columns_per_row = 4  # Số cột bộ lọc trên mỗi hàng
+current_column = 0
+current_row = 0
 
 for key in ['Company', 'Product', 'TypeName', 'Cpu', 'Gpu', 'Ram', 'Memory', 'OpSys']:
     label = tk.Label(filter_frame, text=f"{key}:", anchor='w')
-    label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+    label.grid(row=current_row, column=current_column * 2, sticky='w', padx=5, pady=5)
 
     var = tk.StringVar()
     filters[key] = var
 
-    combobox = ttk.Combobox(filter_frame, textvariable=var, state="readonly")
+    combobox = ttk.Combobox(filter_frame, textvariable=var, state="readonly", width=20)
     combobox['values'] = [''] + sorted(data[key].dropna().unique().astype(str))
-    combobox.grid(row=row, column=1, padx=5, pady=5)
+    combobox.grid(row=current_row, column=current_column * 2 + 1, padx=5, pady=5)
     combobox.bind('<<ComboboxSelected>>', on_filter_change)
 
     filter_comboboxes[key] = combobox
-    row += 1
+    current_column += 1
+
+    # Chuyển sang hàng mới nếu đủ số cột
+    if current_column >= columns_per_row:
+        current_column = 0
+        current_row += 1
 
 # Add price range filter
 price_label = tk.Label(filter_frame, text="Price Range:", anchor='w')
-price_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+price_label.grid(row=current_row + 1, column=0, sticky='w', padx=5, pady=5)
 
 min_price_entry = tk.Entry(filter_frame, width=10)
-min_price_entry.grid(row=row, column=1, sticky='w', padx=5, pady=5)
+min_price_entry.grid(row=current_row + 1, column=1, sticky='w', padx=5, pady=5)
 
 max_price_entry = tk.Entry(filter_frame, width=10)
-max_price_entry.grid(row=row, column=1, sticky='e', padx=5, pady=5)
-row += 1
+max_price_entry.grid(row=current_row + 1, column=2, sticky='e', padx=5, pady=5)
 
 # Add sort filter
 sort_var = tk.StringVar()
 sort_var.set("None")  # Default sort option
 sort_label = tk.Label(filter_frame, text="Sort by Price:", anchor='w')
-sort_label.grid(row=row, column=0, sticky='w', padx=5, pady=5)
+sort_label.grid(row=current_row + 1, column=3, sticky='w', padx=5, pady=5)
 
-sort_combobox = ttk.Combobox(filter_frame, textvariable=sort_var, state="readonly")
+sort_combobox = ttk.Combobox(filter_frame, textvariable=sort_var, state="readonly", width=20)
 sort_combobox['values'] = ["None", "Ascending", "Descending"]
-sort_combobox.grid(row=row, column=1, padx=5, pady=5)
+sort_combobox.grid(row=current_row + 1, column=4, padx=5, pady=5)
 sort_combobox.bind('<<ComboboxSelected>>', on_filter_change)
-row += 1
-
+row = current_row + 2  # +2 để cách phần cuối của bộ lọc trước đó
 # Thêm các lựa chọn về biểu đồ
 def show_chart(option):
     if option == 'Average Price by Company':
@@ -292,5 +300,21 @@ def delete_laptop():
 # Thêm nút xóa trên cửa sổ chính
 delete_button = tk.Button(edit_frame, text="Delete Laptop", command=delete_laptop) #nhét vô editframe
 delete_button.grid(row=0, column=15, columnspan=7, pady=10 , padx=25)
+
+# Hàm hiển thị tất cả dữ liệu
+def show_all_data():
+    # Reset tất cả các bộ lọc về mặc định
+    for key, var in filters.items():
+        var.set('')  # Reset combobox về giá trị rỗng
+    min_price_entry.delete(0, tk.END)  # Xóa giá trị trong min_price_entry
+    max_price_entry.delete(0, tk.END)  # Xóa giá trị trong max_price_entry
+    sort_var.set("None")  # Reset sắp xếp về mặc định
+
+    # Hiển thị toàn bộ dữ liệu
+    update_table(data)
+
+# Thêm nút "Show All" vào filter_frame
+show_all_button = tk.Button(filter_frame, text="Show All", command=show_all_data, bg="lightblue", fg="black")
+show_all_button.grid(row=row, column=3, padx=5, pady=5)
 
 app.mainloop()
