@@ -317,4 +317,85 @@ def show_all_data():
 show_all_button = tk.Button(filter_frame, text="Show All", command=show_all_data, bg="lightblue", fg="black")
 show_all_button.grid(row=row, column=3, padx=5, pady=5)
 
+#tạo mới thông tin
+# Thêm nút và logic để tạo mới thông tin laptop, kiểm tra ID
+def add_new_laptop():
+    new_data = {}
+    
+    # Đọc dữ liệu hiện tại từ file CSV hoặc tạo DataFrame rỗng nếu file chưa tồn tại
+    if os.path.exists(file_path):
+        data = pd.read_csv(file_path, encoding='ISO-8859-1')
+    else:
+        # Tạo DataFrame rỗng với các cột cần thiết
+        data = pd.DataFrame(columns=new_entry_vars.keys())
+
+    for key, var in new_entry_vars.items():
+        value = var.get().strip()
+
+        # Kiểm tra trường ID
+        if key == "laptop_ID":
+            if value:  # Nếu người dùng nhập ID
+                try:
+                    value = int(value)
+                    if not data.empty and value in data["laptop_ID"].values:
+                        messagebox.showerror("Error", "Laptop ID already exists! Please enter a unique ID.")
+                        return
+                except ValueError:
+                    messagebox.showerror("Error", "Laptop ID must be an integer.")
+                    return
+            else:  # Nếu không nhập ID, tự tạo ID mới
+                if not data.empty:
+                    value = data["laptop_ID"].max() + 1  # Tăng ID lớn nhất thêm 1
+                else:
+                    value = 1  # Bắt đầu từ 1 nếu không có dữ liệu
+
+        # Chuyển đổi dữ liệu theo kiểu của cột
+        try:
+            if key in data.columns:  # Kiểm tra nếu key tồn tại trong cột
+                if data[key].dtype == 'float64':
+                    value = float(value)
+                elif data[key].dtype == 'int64':
+                    value = int(value)
+        except ValueError:
+            messagebox.showerror("Error", f"Invalid value for field '{key}'. Please enter a valid {data[key].dtype}.")
+            return
+        new_data[key] = value
+
+    try:
+        # Thêm dòng mới vào DataFrame
+        new_row = pd.DataFrame([new_data])
+        updated_data = pd.concat([data, new_row], ignore_index=True)
+
+        # Lưu vào file CSV
+        updated_data.to_csv(file_path, index=False, encoding='ISO-8859-1')
+        messagebox.showinfo("Success", "New laptop information added successfully!")
+        update_table(updated_data)  # Refresh table display
+
+    except Exception as e:
+        messagebox.showerror("Error", f"An error occurred: {e}")
+
+# Giao diện cho phần tạo mới thông tin
+new_frame = tk.Frame(app, bd=2, relief=tk.GROOVE, padx=10, pady=10)
+new_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=10)
+
+new_entry_vars = {}
+columns_per_row = 5  # Số cột hiển thị trên mỗi hàng
+current_column = 0
+current_row = 0
+
+for key in data.columns:
+    tk.Label(new_frame, text=f"{key}:", anchor="w").grid(row=current_row, column=current_column * 2, padx=5, pady=5)
+    var = tk.StringVar()
+    new_entry_vars[key] = var
+    entry = tk.Entry(new_frame, textvariable=var, width=15)
+    entry.grid(row=current_row, column=current_column * 2 + 1, padx=5, pady=5)
+
+    current_column += 1
+    if current_column >= columns_per_row:  # Chuyển sang hàng mới
+        current_column = 0
+        current_row += 1
+
+add_button = tk.Button(new_frame, text="Add New Laptop", command=add_new_laptop, bg="lightgreen", fg="black")
+add_button.grid(row=current_row + 1, column=0, columnspan=columns_per_row * 2, pady=10)
+
 app.mainloop()
