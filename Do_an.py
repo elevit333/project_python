@@ -6,7 +6,7 @@ import os
 
 # Initialize the Tkinter app
 app = tk.Tk()
-app.title("Thông Tin Laptop")
+app.title("laptop information")
 app.geometry("950x780")
 
 # tải và xử lý dataset
