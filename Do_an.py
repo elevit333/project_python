@@ -2,6 +2,7 @@ import pandas as pd
 import tkinter as tk
 from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
+import os
 
 # Initialize the Tkinter app
 app = tk.Tk()
